@@ -1,20 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bash
+  name: curl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: bash
+      app: curl
   template:
     metadata:
       labels:
-        app: bash
+        app: curl
     spec:
       containers:
-      - name: bash
-        image: ellerbrock/alpine-bash-curl-ssl
-        command: ["/bin/sh"]
-        args: ["-c", "sleep 1000000"]
+      - name: curl
+        image: snelsondexcom/alpine-with-curl:1.0
         tty: true
