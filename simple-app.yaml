@@ -1,0 +1,89 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: simple-app
+  name: curl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: curl
+  template:
+    metadata:
+      labels:
+        app: curl
+    spec:
+      containers:
+      - name: curl
+        image: snelsondexcom/alpine-with-curl:1.0
+        tty: true
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: simple-app
+  name: simple-server
+  labels:
+    app: lunchandlearn
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: lunchandlearn
+  template:
+    metadata:
+      labels:
+        app: lunchandlearn
+    spec:
+      containers:
+      - name: foo-app
+        image: hashicorp/http-echo:0.2.3
+        args:
+        - "-text=foo"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: simple-app
+  name: simple-go-server-service-load-balancer
+  labels:
+    app: lunchandlearn
+spec:
+  type: LoadBalancer
+  selector:
+    app: lunchandlearn
+  ports:
+    - protocol: TCP
+      port: 5678
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: simple-app
+  name: simple-go-server-service-node-port
+  labels:
+    app: lunchandlearn
+spec:
+  type: NodePort
+  selector:
+    app: lunchandlearn
+  ports:
+    - protocol: TCP
+      port: 5678
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: simple-app
+  name: simple-go-server-service-cluster-ip
+  labels:
+    app: lunchandlearn
+spec:
+  selector:
+    app: lunchandlearn
+  ports:
+    - protocol: TCP
+      port: 5678
+---
+
